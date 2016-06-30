@@ -10,11 +10,11 @@ type RoundData struct {
 }
 
 type RoundRobin struct {
-	Data       []RoundData
-	LastHit    int // 上次选中的index
-	CurrWeight int // 当前选中的权重值
-	Gcd        int //当前所有权重的最大公约数 比如 2，4，8 的最大公约数为：2
-	MaxWeight  int // 最大权重值
+	data       []RoundData
+	lastHit    int // 上次选中的index
+	currWeight int // 当前选中的权重值
+	gcd        int //当前所有权重的最大公约数 比如 2，4，8 的最大公约数为：2
+	maxWeight  int // 最大权重值
 
 	lock *sync.RWMutex
 }
@@ -22,10 +22,10 @@ type RoundRobin struct {
 func NewRoundRobin(data []RoundData) *RoundRobin {
 	r := &RoundRobin{}
 	r.lock = new(sync.RWMutex)
-	r.Data = data
-	r.Gcd = r.getGcd()
-	r.MaxWeight = r.getMaxWeight()
-	r.LastHit = -1
+	r.data = data
+	r.gcd = r.getGcd()
+	r.maxWeight = r.getMaxWeight()
+	r.lastHit = -1
 
 	return r
 }
@@ -36,19 +36,19 @@ func (this *RoundRobin) Get() interface{} {
 
 	defer this.lock.RUnlock()
 
-	n := len(this.Data)
+	n := len(this.data)
 	for {
-		this.LastHit = (this.LastHit + 1) % n
-		if this.LastHit == 0 {
-			this.CurrWeight = this.CurrWeight - this.Gcd
-			if this.CurrWeight <= 0 {
-				this.CurrWeight = this.MaxWeight
+		this.lastHit = (this.lastHit + 1) % n
+		if this.lastHit == 0 {
+			this.currWeight = this.currWeight - this.gcd
+			if this.currWeight <= 0 {
+				this.currWeight = this.maxWeight
 			}
 
 		}
 
-		if this.Data[this.LastHit].Weight >= this.CurrWeight {
-			return this.Data[this.LastHit]
+		if this.data[this.lastHit].Weight >= this.currWeight {
+			return this.data[this.lastHit]
 		}
 	}
 
@@ -59,9 +59,9 @@ func (this *RoundRobin) Get() interface{} {
 // 获取最大的权值
 func (this *RoundRobin) getMaxWeight() int {
 	max := 0
-	for i, _ := range this.Data {
-		if this.Data[i].Weight > max {
-			max = this.Data[i].Weight
+	for i, _ := range this.data {
+		if this.data[i].Weight > max {
+			max = this.data[i].Weight
 		}
 	}
 
@@ -70,9 +70,9 @@ func (this *RoundRobin) getMaxWeight() int {
 
 //  获取服务器所有权值的最大公约数
 func (this *RoundRobin) getGcd() int {
-	ints := make([]int, len(this.Data))
-	for i, _ := range this.Data {
-		ints[i] = this.Data[i].Weight
+	ints := make([]int, len(this.data))
+	for i, _ := range this.data {
+		ints[i] = this.data[i].Weight
 	}
 
 	return ngcd(ints)
@@ -81,10 +81,10 @@ func (this *RoundRobin) getGcd() int {
 func (this *RoundRobin) Reset(data []RoundData) {
 	this.lock.Lock()
 
-	this.Data = data
-	this.Gcd = this.getGcd()
-	this.MaxWeight = this.getMaxWeight()
-	this.LastHit = -1
+	this.data = data
+	this.gcd = this.getGcd()
+	this.maxWeight = this.getMaxWeight()
+	this.lastHit = -1
 
 	this.lock.Unlock()
 }

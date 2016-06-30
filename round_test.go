@@ -29,7 +29,7 @@ func Test_RoundRobin(t *testing.T) {
 	c := map[string]int{}
 
 	for i := 0; i < 100; i++ {
-		ser := r.Get().(RoundData).Data.(string)
+		ser := r.Get().(string)
 		if _, ok := c[ser]; !ok {
 			c[ser] = 0
 		}

@@ -32,11 +32,16 @@ func NewRoundRobin(data []RoundData) *RoundRobin {
 
 // 取值
 func (this *RoundRobin) Get() interface{} {
+
 	this.lock.RLock()
 
 	defer this.lock.RUnlock()
-
 	n := len(this.data)
+
+	if n == 1 {
+		return this.data[0].Data
+	}
+
 	for {
 		this.lastHit = (this.lastHit + 1) % n
 		if this.lastHit == 0 {
@@ -48,7 +53,7 @@ func (this *RoundRobin) Get() interface{} {
 		}
 
 		if this.data[this.lastHit].Weight >= this.currWeight {
-			return this.data[this.lastHit]
+			return this.data[this.lastHit].Data
 		}
 	}
 

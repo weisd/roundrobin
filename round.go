@@ -1,8 +1,4 @@
-package round_robin
-
-import (
-	"fmt"
-)
+package roundrobin
 
 type RoundData struct {
 	Data   interface{}
@@ -33,7 +29,6 @@ func (this *RoundRobin) GetServer() interface{} {
 	n := len(this.Data)
 	for {
 		this.LastHit = (this.LastHit + 1) % n
-		fmt.Println("last %d", this.LastHit)
 		if this.LastHit == 0 {
 			this.CurrWeight = this.CurrWeight - this.Gcd
 			if this.CurrWeight <= 0 {

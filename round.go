@@ -79,6 +79,11 @@ func (this *RoundRobin) getMaxWeight() int {
 
 //  获取服务器所有权值的最大公约数
 func (this *RoundRobin) getGcd() int {
+
+	if len(this.data) == 0 {
+		return 0
+	}
+
 	ints := make([]int, len(this.data))
 	for i, _ := range this.data {
 		ints[i] = this.data[i].Weight

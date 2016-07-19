@@ -38,6 +38,10 @@ func (this *RoundRobin) Get() interface{} {
 	defer this.lock.RUnlock()
 	n := len(this.data)
 
+	if n == 0 {
+		return nil
+	}
+
 	if n == 1 {
 		return this.data[0].Data
 	}

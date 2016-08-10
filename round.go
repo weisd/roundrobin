@@ -30,6 +30,10 @@ func NewRoundRobin(data []RoundData) *RoundRobin {
 	return r
 }
 
+func (this *RoundRobin) GetRoundData() []RoundData {
+	return this.data
+}
+
 // 取值
 func (this *RoundRobin) Get() interface{} {
 
